@@ -2,13 +2,23 @@
 import uvicorn
 
 from fastapi import FastAPI
+from user.interface.controllers.user_controller import router as user_routers
+from fastapi.exceptions import RequestValidationError
+from fastapi.requests import Request
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
+app.include_router(user_routers)
 
-@app.get("/")
-def hello():
-    return {"Hello": "FastAPI"}
-
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(
+        request: Request,
+        exc: RequestValidationError
+        ):
+    return JSONResponse(
+        status_code=400,
+        content=exc.errors(),
+        )
 
 
 if __name__ == '__main__':
