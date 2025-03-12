@@ -8,7 +8,7 @@ from fastapi import HTTPException, Depends
 from typing import Annotated
 
 from dependency_injector.wiring import inject, Provide
-from containers import Container
+
 
 
 class UserService:
