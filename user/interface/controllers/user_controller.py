@@ -44,9 +44,9 @@ class UpdateUser(BaseModel):
 @inject
 def update_user(user_id: str, user: UpdateUser, user_service: UserService = Depends(Provide[Container.user_service])):
     user = user_service.update_user(
-            user_id= user_id,
-            name= user.name,
-            password= user.password,
+        user_id=user_id,
+        name=user.name,
+        password=user.password,
         )
 
     return user

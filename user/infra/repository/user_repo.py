@@ -40,7 +40,6 @@ class UserRepository(IUserRepository):
             user = db.query(User).filter(User.id == id).first()
 
         if not user:
-
             raise HTTPException(status=422)
 
         return UserVO(**row_to_dict(user))
@@ -49,13 +48,13 @@ class UserRepository(IUserRepository):
         with SessionLocal() as db:
             user = db.query(User).filter(User.id == user_vo.id).first()
 
-        if not user:
+            if not user:
+                raise HTTPException(status_code=422)
 
-            raise HTTPException(status=422)
-        user.name = user_vo.name
-        user.password = user_vo.password
+            user.name = user_vo.name
+            user.password = user_vo.password
 
-        db.add(user)
-        db.commit()
+            db.add(user)
+            db.commit()
 
         return user

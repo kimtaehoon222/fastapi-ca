@@ -6,9 +6,8 @@ from user.domain.repository.user_repo import IUserRepository
 from user.infra.repository.user_repo import UserRepository
 from fastapi import HTTPException, Depends
 from typing import Annotated
-
+from utils.crypto import Crypto
 from dependency_injector.wiring import inject, Provide
-
 
 
 class UserService:
@@ -19,6 +18,7 @@ class UserService:
             ):
         self.user_repo = user_repo
         self.ulid = ULID()
+        self.crypto = Crypto()
 
     def create_user(self, name: str, email: str, password: str, memo: str | None = None, ):
         now = datetime.now()
@@ -26,7 +26,7 @@ class UserService:
             id=self.ulid.generate(),
             name=name,
             email=email,
-            password=password,
+            password=self.crypto.encrypt(password),
             memo=memo,
             created_at=now,
             updated_at=now,
@@ -34,7 +34,7 @@ class UserService:
         self.user_repo.save(user)
         return user
 
-    def update_user(self, user_id: str, name: str | None = None, password: str | None = None,):
+    def update_user(self, user_id: str, name: str | None = None, password: str | None = None, ):
         user = self.user_repo.find_by_id(user_id)
 
         if name:
