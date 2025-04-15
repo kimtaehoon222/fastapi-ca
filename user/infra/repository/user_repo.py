@@ -58,3 +58,13 @@ class UserRepository(IUserRepository):
             db.commit()
 
         return user
+
+    def get_users(self, page: int = 1, item_per_page: int = 10) -> tuple[int,list[UserVO]]:
+        with SessionLocal() as db:
+            query = db.query(User)
+            total_count = query.count()
+
+            offset = (page - 1) * item_per_page
+            users = query.limit(item_per_page).offset(offset).all()
+
+        return total_count,[UserVO(**row_to_dict(user)) for user in users]
